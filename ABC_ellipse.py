@@ -6,6 +6,7 @@ import cv2
 import tkinter as tk
 from tkinter import filedialog
 import matplotlib.pyplot as plt
+import time
 
 # ==========================================================
 # LOAD IMAGE
@@ -267,6 +268,9 @@ best_index = fitness_values.index(max(fitness_values))
 global_best = bees[best_index]
 global_best_fitness = fitness_values[best_index]
 
+fitness_history = []
+start_time = time.time()
+
 for iteration in range(max_iterations):
 
     bees, fitness_values = employed_bee_phase(
@@ -291,8 +295,19 @@ for iteration in range(max_iterations):
         global_best = bees[current_best_index]
         global_best_fitness = current_best_fitness
 
+    fitness_history.append(global_best_fitness)
     print("Iteration:", iteration,
           "Best Fitness:", global_best_fitness)
+    
+end_time = time.time()
+total_runtime = end_time - start_time
+
+print("Total Runtime:", total_runtime, "seconds")
+print("Time per iteration:", total_runtime / max_iterations)
+avg_error = 1.0 / global_best_fitness
+print("Final Average Ellipse Residual Error:", avg_error)
+
+
 
 # ==========================================================
 # DRAW RESULT
@@ -317,3 +332,12 @@ plt.plot(x_ellipse, y_ellipse, color='blue', linewidth=2)
 plt.title("Detected Ellipse")
 plt.gca().invert_yaxis()
 plt.show()
+
+plt.figure()
+plt.plot(fitness_history)
+plt.xlabel("Iteration")
+plt.ylabel("Best Fitness")
+plt.title("ABC Convergence Curve")
+plt.grid()
+plt.show()
+
